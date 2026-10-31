@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { STATUS, CATEGORIES, URGENCY } = require('../config/constants');
+import mongoose from 'mongoose';
+import { STATUS, CATEGORIES, URGENCY } from '../config/constants.js';
 
 const historySchema = new mongoose.Schema(
   {
@@ -24,7 +24,16 @@ const complaintSchema = new mongoose.Schema(
       coordinates: { type: [Number], default: undefined }, // [lng, lat]
       address: { type: String, trim: true },
     },
-    photos: [{ type: String }],
+    media: [
+      {
+        _id: false,
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+        resourceType: { type: String, enum: ['image', 'video'], required: true },
+        format: String,
+        bytes: Number,
+      },
+    ],
     status: { type: String, enum: Object.values(STATUS), default: STATUS.OPEN, index: true },
     citizen: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
@@ -43,4 +52,4 @@ const complaintSchema = new mongoose.Schema(
 complaintSchema.index({ 'location.coordinates': '2dsphere' }, { sparse: true });
 complaintSchema.index({ title: 'text', description: 'text' });
 
-module.exports = mongoose.model('Complaint', complaintSchema);
+export default mongoose.model('Complaint', complaintSchema);

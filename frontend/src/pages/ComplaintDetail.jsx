@@ -36,7 +36,13 @@ export default function ComplaintDetail() {
         </div>
         <p className="muted small">{c.ticketId} · {catLabel(c.category)} · {c.area}{c.location?.address ? ` (${c.location.address})` : ''}</p>
         <p>{c.description}</p>
-        {c.photos?.length > 0 && <div className="photos">{c.photos.map((p) => <a key={p} href={p} target="_blank" rel="noreferrer"><img src={p} alt="complaint" /></a>)}</div>}
+        {c.media?.length > 0 && (
+          <div className="photos">
+            {c.media.map((m) => (m.resourceType === 'video'
+              ? <video key={m.publicId} src={m.url} controls preload="metadata" />
+              : <a key={m.publicId} href={m.url} target="_blank" rel="noreferrer"><img src={m.url} alt="complaint" /></a>))}
+          </div>
+        )}
         <div className="meta">
           <span>Reported by <b>{c.citizen?.name}</b> on {fmtDate(c.createdAt)}</span>
           <span>Assigned to <b>{c.assignedTo?.name || 'nobody yet'}</b></span>

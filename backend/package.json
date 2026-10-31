@@ -2,7 +2,9 @@
   "name": "ringfix-backend",
   "version": "1.0.0",
   "description": "RingFix - Circus of Wonders grievance tracker API",
+  "type": "module",
   "main": "src/server.js",
+  "engines": { "node": ">=18" },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
@@ -10,8 +12,8 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
-    "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",

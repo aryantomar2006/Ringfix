@@ -1,6 +1,6 @@
-const cron = require('node-cron');
-const { slaCron } = require('../config/env');
-const { scanAndEscalate } = require('../services/sla.service');
+import cron from 'node-cron';
+import { slaCron } from '../config/env.js';
+import { scanAndEscalate } from '../services/sla.service.js';
 
 function startSlaJob() {
   cron.schedule(slaCron, async () => {
@@ -14,4 +14,4 @@ function startSlaJob() {
   console.log(`SLA job scheduled (${slaCron})`);
 }
 
-module.exports = { startSlaJob };
+export { startSlaJob };

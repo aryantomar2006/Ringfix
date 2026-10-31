@@ -1,6 +1,6 @@
-const { env } = require('../config/env');
+import { env } from '../config/env.js';
 
-exports.notFound = (req, _res, next) => {
+export const notFound = (req, _res, next) => {
   const err = new Error(`Route not found: ${req.method} ${req.originalUrl}`);
   err.statusCode = 404;
   err.isOperational = true;
@@ -8,7 +8,7 @@ exports.notFound = (req, _res, next) => {
 };
 
 // eslint-disable-next-line no-unused-vars
-exports.errorHandler = (err, _req, res, _next) => {
+export const errorHandler = (err, _req, res, _next) => {
   let status = err.statusCode || 500;
   let message = err.isOperational ? err.message : 'Something went wrong';
   let details = err.details;

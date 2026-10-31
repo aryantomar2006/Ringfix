@@ -1,7 +1,7 @@
-const Complaint = require('../models/Complaint');
-const User = require('../models/User');
-const notifications = require('./notification.service');
-const { STATUS, ROLES, MAX_ESCALATION_LEVEL } = require('../config/constants');
+import Complaint from '../models/Complaint.js';
+import User from '../models/User.js';
+import * as notifications from './notification.service.js';
+import { STATUS, ROLES, MAX_ESCALATION_LEVEL } from '../config/constants.js';
 
 const HOUR = 60 * 60 * 1000;
 
@@ -53,4 +53,4 @@ async function scanAndEscalate() {
   return { flagged: overdue.length, escalated };
 }
 
-module.exports = { scanAndEscalate };
+export { scanAndEscalate };

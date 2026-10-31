@@ -1,30 +1,55 @@
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
-const multer = require('multer');
-const ApiError = require('../utils/ApiError');
+import path from 'path';
+import multer from 'multer';
+import ApiError from '../utils/ApiError.js';
+import { upload } from '../config/env.js';
 
-const uploadDir = path.join(__dirname, '..', '..', 'uploads');
-fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`);
+// Allowlist: MIME type AND file extension must both match (blocks renamed files like evil.exe -> a.png)
+const ALLOWED = {
+  image: {
+    mimes: ['image/jpeg', 'image/png', 'image/webp'],
+    exts: ['.jpg', '.jpeg', '.png', '.webp'],
+    maxBytes: upload.maxImageBytes,
   },
-});
-
-const fileFilter = (_req, file, cb) => {
-  if (/^image\/(jpeg|png|webp)$/.test(file.mimetype)) return cb(null, true);
-  cb(ApiError.badRequest('Only JPEG, PNG or WebP images are allowed'));
+  video: {
+    mimes: ['video/mp4', 'video/webm', 'video/quicktime'],
+    exts: ['.mp4', '.webm', '.mov'],
+    maxBytes: upload.maxVideoBytes,
+  },
 };
 
-// Up to 3 photos, 5 MB each
-exports.uploadPhotos = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024, files: 3 },
-}).array('photos', 3);
+function kindOf(file) {
+  const ext = path.extname(file.originalname || '').toLowerCase();
+  return Object.keys(ALLOWED).find(
+    (k) => ALLOWED[k].mimes.includes(file.mimetype) && ALLOWED[k].exts.includes(ext)
+  );
+}
 
-exports.uploadDir = uploadDir;
+const fileFilter = (_req, file, cb) => {
+  if (kindOf(file)) return cb(null, true);
+  cb(ApiError.badRequest('Only JPG, PNG, WebP images and MP4, WebM, MOV videos are allowed'));
+};
+
+// Memory storage: serverless filesystems are read-only, files go straight to Cloudinary
+const parser = multer({
+  storage: multer.memoryStorage(),
+  fileFilter,
+  limits: {
+    fileSize: Math.max(upload.maxImageBytes, upload.maxVideoBytes),
+    files: upload.maxFiles,
+  },
+}).array('media', upload.maxFiles);
+
+// multer only supports one fileSize limit, so enforce per-type limits here and tag each file
+const enforceTypeLimits = (req, _res, next) => {
+  for (const file of req.files || []) {
+    file.kind = kindOf(file);
+    const max = ALLOWED[file.kind].maxBytes;
+    if (file.size > max) {
+      return next(ApiError.badRequest(`${file.originalname}: ${file.kind} must be under ${Math.round(max / 1048576)} MB`));
+    }
+  }
+  next();
+};
+
+export const uploadMedia = [parser, enforceTypeLimits];
+export { ALLOWED };

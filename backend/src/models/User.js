@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { ROLES } = require('../config/constants');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { ROLES } from '../config/constants.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,4 +33,4 @@ userSchema.set('toJSON', {
   },
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

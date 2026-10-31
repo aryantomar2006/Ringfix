@@ -1,7 +1,7 @@
-const Joi = require('joi');
-const { CATEGORIES, URGENCY, STATUS } = require('../config/constants');
+import Joi from 'joi';
+import { CATEGORIES, URGENCY, STATUS } from '../config/constants.js';
 
-exports.create = Joi.object({
+export const create = Joi.object({
   title: Joi.string().trim().min(3).max(120).required(),
   description: Joi.string().trim().min(10).max(2000).required(),
   category: Joi.string().valid(...CATEGORIES).required(),
@@ -12,7 +12,7 @@ exports.create = Joi.object({
   lng: Joi.number().min(-180).max(180),
 }).and('lat', 'lng');
 
-exports.list = Joi.object({
+export const list = Joi.object({
   status: Joi.string().valid(...Object.values(STATUS)),
   category: Joi.string().valid(...CATEGORIES),
   urgency: Joi.string().valid(...URGENCY),
@@ -27,11 +27,11 @@ exports.list = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(20),
 });
 
-exports.updateStatus = Joi.object({
+export const updateStatus = Joi.object({
   status: Joi.string().valid(...Object.values(STATUS)).required(),
   note: Joi.string().trim().max(500).allow('', null),
 });
 
-exports.assign = Joi.object({
+export const assign = Joi.object({
   staffId: Joi.string().hex().length(24).required(),
 });

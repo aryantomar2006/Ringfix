@@ -1,5 +1,5 @@
-const Complaint = require('../models/Complaint');
-const { STATUS } = require('../config/constants');
+import Complaint from '../models/Complaint.js';
+import { STATUS } from '../config/constants.js';
 
 // Public transparency stats: resolved vs pending, average resolution time
 async function publicStats() {
@@ -62,4 +62,4 @@ async function areaDensity() {
   ]);
 }
 
-module.exports = { publicStats, heatmap, areaDensity };
+export { publicStats, heatmap, areaDensity };

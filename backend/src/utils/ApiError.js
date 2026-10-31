@@ -14,4 +14,4 @@ class ApiError extends Error {
   static conflict(msg) { return new ApiError(409, msg); }
 }
 
-module.exports = ApiError;
+export default ApiError;

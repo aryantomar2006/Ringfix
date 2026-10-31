@@ -1,6 +1,6 @@
-const PDFDocument = require('pdfkit');
-const Complaint = require('../models/Complaint');
-const { buildFilter } = require('./complaint.service');
+import PDFDocument from 'pdfkit';
+import Complaint from '../models/Complaint.js';
+import { buildFilter } from './complaint.service.js';
 
 const esc = (v) => {
   const s = v === undefined || v === null ? '' : String(v);
@@ -65,4 +65,4 @@ async function streamPdf(query, user, res) {
   doc.end();
 }
 
-module.exports = { buildCsv, streamPdf };
+export { buildCsv, streamPdf };

@@ -1,10 +1,12 @@
-const router = require('express').Router();
-const ctrl = require('../controllers/ops.controller');
-const validate = require('../middleware/validate');
-const { protect, restrictTo } = require('../middleware/auth');
-const authV = require('../validators/auth.validator');
-const complaintV = require('../validators/complaint.validator');
-const { ROLES } = require('../config/constants');
+import { Router } from 'express';
+import * as ctrl from '../controllers/ops.controller.js';
+import validate from '../middleware/validate.js';
+import { protect, restrictTo } from '../middleware/auth.js';
+import * as authV from '../validators/auth.validator.js';
+import * as complaintV from '../validators/complaint.validator.js';
+import { ROLES } from '../config/constants.js';
+
+const router = Router();
 
 // ---- Public (no auth): transparency portal + heatmap
 router.get('/public/stats', ctrl.publicStats);
@@ -28,4 +30,4 @@ router.get('/analytics/areas', restrictTo(ROLES.STAFF, ROLES.ADMIN), ctrl.areaDe
 router.post('/staff', restrictTo(ROLES.ADMIN), validate(authV.createStaff), ctrl.createStaff);
 router.post('/sla/scan', restrictTo(ROLES.ADMIN), ctrl.runSlaScan);
 
-module.exports = router;
+export default router;

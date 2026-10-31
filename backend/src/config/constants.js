@@ -25,7 +25,7 @@ const SLA_HOURS = Object.freeze({ low: 120, medium: 72, high: 48, critical: 24 }
 
 const MAX_ESCALATION_LEVEL = 3;
 
-module.exports = {
+export {
   ROLES,
   STATUS,
   STATUS_TRANSITIONS,

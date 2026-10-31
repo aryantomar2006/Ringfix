@@ -1,18 +1,18 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-exports.register = Joi.object({
+export const register = Joi.object({
   name: Joi.string().trim().min(2).max(80).required(),
   email: Joi.string().email().lowercase().required(),
   phone: Joi.string().trim().pattern(/^[0-9+\-\s]{7,15}$/).allow('', null),
   password: Joi.string().min(6).max(72).required(),
 });
 
-exports.login = Joi.object({
+export const login = Joi.object({
   email: Joi.string().email().lowercase().required(),
   password: Joi.string().required(),
 });
 
-exports.createStaff = Joi.object({
+export const createStaff = Joi.object({
   name: Joi.string().trim().min(2).max(80).required(),
   email: Joi.string().email().lowercase().required(),
   phone: Joi.string().trim().allow('', null),

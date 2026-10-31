@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
-const { smtp } = require('../config/env');
-const Notification = require('../models/Notification');
-const User = require('../models/User');
+import nodemailer from 'nodemailer';
+import { smtp } from '../config/env.js';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
 
 let transporter = null;
 if (smtp.host && smtp.user) {
@@ -57,4 +57,4 @@ async function markRead(userId, id) {
   return Notification.updateMany(filter, { read: true });
 }
 
-module.exports = { notify, listForUser, markRead };
+export { notify, listForUser, markRead };

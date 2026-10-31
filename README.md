@@ -2,7 +2,7 @@
 
 Grievance tracker for the **Circus of Wonders**: citizens report municipal issues, staff resolve them, everyone can watch progress live.
 
-**Stack:** MongoDB Atlas · Express · React (Vite) · Node — MVC backend, separate SPA frontend.
+**Stack:** MongoDB Atlas · Express · React (Vite) · Node (ES modules) — MVC backend, separate SPA frontend.
 
 ## Structure
 
@@ -94,4 +94,20 @@ POST   /api/staff  | /api/sla/scan                 (admin)
 - Public sign-up always creates a **citizen**; staff/admin are created by an admin (or seed).
 - Staff may only change status on complaints assigned to them; admins can change any.
 - Without SMTP creds, emails/SMS are logged to the console. Plug Twilio/MSG91 into `sendSms`.
-- Uploaded photos are stored on local disk (`backend/uploads`). For production use S3/Cloudinary.
+- Media (field `media`, up to 3 files) goes to **Cloudinary**. Multer (memory storage) checks that both the MIME type **and** the extension are allowed: images `jpg/jpeg/png/webp`, videos `mp4/webm/mov`. Per-type size limits are enforced right after.
+- Vercel caps request bodies at **4.5 MB**, so limits default to 4 MB per file (`MAX_IMAGE_MB`, `MAX_VIDEO_MB`). Larger videos need direct-to-Cloudinary signed uploads.
+
+## Deploy on Vercel (two separate projects)
+
+Push the repo to GitHub, then create **two** Vercel projects from it.
+
+**Backend** — Root Directory: `backend` (Framework: Other)
+Env vars: `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL` (frontend URL, no trailing slash), `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CRON_SECRET`.
+Check `https://<backend>.vercel.app/api/health`.
+In Atlas → Network Access, allow `0.0.0.0/0` (Vercel IPs change).
+
+**Frontend** — Root Directory: `frontend` (Framework: Vite)
+Env var: `VITE_API_URL=https://<backend>.vercel.app/api`
+Then set the backend's `CLIENT_URL` to the frontend URL and redeploy the backend.
+
+**SLA job:** `node-cron` can't run on serverless, so `backend/vercel.json` calls `/api/cron/sla` via Vercel Cron (daily on the Hobby plan; use a more frequent schedule on Pro). Admins can also trigger a scan from the Admin page.

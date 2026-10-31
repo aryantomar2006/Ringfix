@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { complaintApi } from '../api/services';
 import { CATEGORIES, URGENCY } from '../utils/format';
 
+const MAX_FILES = 3;
+const MAX_MB = 4; // keep in sync with backend MAX_IMAGE_MB / MAX_VIDEO_MB (Vercel body cap is 4.5 MB)
+const ACCEPT = 'image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime';
+
 export default function NewComplaint() {
   const nav = useNavigate();
   const [form, setForm] = useState({ title: '', description: '', category: 'road_damage', urgency: 'medium', area: '', address: '', lat: '', lng: '' });
@@ -10,6 +14,18 @@ export default function NewComplaint() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  // Early client-side check (the server re-validates type, extension and size)
+  const pickFiles = (e) => {
+    const picked = Array.from(e.target.files);
+    const allowed = ACCEPT.split(',');
+    const bad = picked.find((f) => !allowed.includes(f.type) || f.size > MAX_MB * 1024 * 1024);
+    if (picked.length > MAX_FILES) setError(`Choose at most ${MAX_FILES} files`);
+    else if (bad) setError(`${bad.name}: unsupported type or larger than ${MAX_MB} MB`);
+    else setError('');
+    if (bad || picked.length > MAX_FILES) { e.target.value = ''; setFiles([]); return; }
+    setFiles(picked);
+  };
 
   const useMyLocation = () => {
     if (!navigator.geolocation) return setError('Geolocation not supported');
@@ -24,7 +40,7 @@ export default function NewComplaint() {
     setBusy(true); setError('');
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => { if (v !== '') fd.append(k, v); });
-    files.forEach((f) => fd.append('photos', f));
+    files.forEach((f) => fd.append('media', f));
     try {
       const c = await complaintApi.create(fd);
       nav(`/complaints/${c._id}`);
@@ -58,9 +74,10 @@ export default function NewComplaint() {
         <label>Longitude<input type="number" step="any" value={form.lng} onChange={set('lng')} /></label>
         <button type="button" className="btn ghost align-end" onClick={useMyLocation}>📍 Use my location</button>
       </div>
-      <label>Photos (up to 3)
-        <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(e) => setFiles(Array.from(e.target.files).slice(0, 3))} />
+      <label>Photos / videos (up to {MAX_FILES}; JPG, PNG, WebP, MP4, WebM, MOV; max {MAX_MB} MB each)
+        <input type="file" accept={ACCEPT} multiple onChange={pickFiles} />
       </label>
+      {files.length > 0 && <p className="muted small">{files.map((f) => f.name).join(', ')}</p>}
       <button className="btn" disabled={busy}>{busy ? 'Submitting…' : 'Submit complaint'}</button>
     </form>
   );

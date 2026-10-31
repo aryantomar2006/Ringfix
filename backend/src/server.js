@@ -1,11 +1,12 @@
-const { port } = require('./config/env');
-const connectDB = require('./config/db');
-const app = require('./app');
-const { startSlaJob } = require('./jobs/sla.job');
+// Local / traditional-host entry point. On Vercel, api/index.js is used instead.
+import { port } from './config/env.js';
+import connectDB from './config/db.js';
+import app from './app.js';
+import { startSlaJob } from './jobs/sla.job.js';
 
 (async () => {
   await connectDB();
-  startSlaJob();
+  startSlaJob(); // in-process cron (not used on Vercel; see vercel.json crons)
   const server = app.listen(port, () => console.log(`RingFix API listening on :${port}`));
 
   const shutdown = () => server.close(() => process.exit(0));

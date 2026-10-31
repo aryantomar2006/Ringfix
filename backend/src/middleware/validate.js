@@ -1,7 +1,7 @@
-const ApiError = require('../utils/ApiError');
+import ApiError from '../utils/ApiError.js';
 
 // Validates req[source] against a Joi schema and replaces it with the cleaned value
-module.exports = (schema, source = 'body') => (req, _res, next) => {
+export default (schema, source = 'body') => (req, _res, next) => {
   const { error, value } = schema.validate(req[source], {
     abortEarly: false,
     stripUnknown: true,

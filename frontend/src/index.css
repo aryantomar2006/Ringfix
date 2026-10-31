@@ -91,7 +91,8 @@ tbody tr:hover { background: #ffffff08; }
 
 .meta { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: var(--muted); margin-top: 1rem; }
 .meta b { color: var(--text); }
-.photos { display: flex; gap: .75rem; flex-wrap: wrap; } .photos img { height: 140px; border-radius: 10px; border: 2px solid #ffffff22; }
+.photos { display: flex; gap: .75rem; flex-wrap: wrap; } .photos video { height: 200px; border-radius: 10px; border: 2px solid #ffffff22; background: #000; }
+.photos img { height: 140px; border-radius: 10px; border: 2px solid #ffffff22; }
 .timeline { list-style: none; padding: 0; margin: 0; border-left: 3px dotted var(--pink); }
 .timeline li { padding: 0 0 1rem 1rem; position: relative; }
 .timeline li::before { content: ''; position: absolute; left: -8px; top: 6px; width: 11px; height: 11px; background: var(--pink); border-radius: 50%; }

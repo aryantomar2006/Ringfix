@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const ApiError = require('../utils/ApiError');
-const { jwtSecret, jwtExpiresIn } = require('../config/env');
-const { ROLES } = require('../config/constants');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import ApiError from '../utils/ApiError.js';
+import { jwtSecret, jwtExpiresIn } from '../config/env.js';
+import { ROLES } from '../config/constants.js';
 
 const signToken = (user) => jwt.sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: jwtExpiresIn });
 
@@ -30,4 +30,4 @@ async function createPrivilegedUser(data) {
   return User.create(data);
 }
 
-module.exports = { register, login, createPrivilegedUser };
+export { register, login, createPrivilegedUser };
