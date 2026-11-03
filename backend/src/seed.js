@@ -11,9 +11,9 @@ const HOUR = 3600 * 1000;
   await Promise.all([User.deleteMany({}), Complaint.deleteMany({})]);
 
   const [admin, staff, citizen] = await Promise.all([
-    User.create({ name: 'The Ringmaster', email: 'admin@ringfix.test', password: 'Admin@123', role: 'admin' }),
-    User.create({ name: 'Roadie Rick', email: 'staff@ringfix.test', password: 'Staff@123', role: 'staff', department: 'Roads' }),
-    User.create({ name: 'Acrobat Anya', email: 'citizen@ringfix.test', password: 'Citizen@123', role: 'citizen', phone: '9876543210' }),
+    User.create({ name: 'The Ringmaster', email: 'admin@ringfix.test', password: 'Admin@123', role: 'admin', isVerified: true }),
+    User.create({ name: 'Roadie Rick', email: 'staff@ringfix.test', password: 'Staff@123', role: 'staff', department: 'Roads', isVerified: true }),
+    User.create({ name: 'Acrobat Anya', email: 'citizen@ringfix.test', password: 'Citizen@123', role: 'citizen', phone: '9876543210', isVerified: true }),
   ]);
 
   const samples = [

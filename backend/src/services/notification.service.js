@@ -57,4 +57,4 @@ async function markRead(userId, id) {
   return Notification.updateMany(filter, { read: true });
 }
 
-export { notify, listForUser, markRead };
+export { notify, listForUser, markRead, sendEmail };

@@ -11,6 +11,13 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: Object.values(ROLES), default: ROLES.CITIZEN, index: true },
     department: { type: String, trim: true }, // for staff, e.g. "Roads", "Water"
     isActive: { type: Boolean, default: true },
+
+    // Email OTP verification
+    isVerified: { type: Boolean, default: false },
+    otpHash: { type: String, select: false },
+    otpExpiresAt: Date,
+    otpAttempts: { type: Number, default: 0 },
+    otpSentAt: Date,
   },
   { timestamps: true }
 );
@@ -28,6 +35,10 @@ userSchema.methods.comparePassword = function comparePassword(candidate) {
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     delete ret.password;
+    delete ret.otpHash;
+    delete ret.otpExpiresAt;
+    delete ret.otpAttempts;
+    delete ret.otpSentAt;
     delete ret.__v;
     return ret;
   },

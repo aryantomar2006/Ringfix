@@ -102,3 +102,5 @@ tbody tr:hover { background: #ffffff08; }
 .bar-fill { background: linear-gradient(90deg, var(--pink), var(--good)); height: 100%; }
 .team-row { padding: .5rem 0; border-bottom: 1px solid #ffffff14; }
 @media (max-width: 600px) { .bar-row { grid-template-columns: 1fr; } }
+
+.otp-input { font-size: 1.6rem; letter-spacing: .6rem; text-align: center; font-family: 'Fredoka', monospace; }

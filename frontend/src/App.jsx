@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import { Login, Register } from './pages/AuthPages';
+import VerifyOtp from './pages/VerifyOtp';
 import NewComplaint from './pages/NewComplaint';
 import Dashboard from './pages/Dashboard';
 import ComplaintDetail from './pages/ComplaintDetail';
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify" element={<VerifyOtp />} />
             <Route path="/transparency" element={<Transparency />} />
 
             <Route element={<ProtectedRoute roles={['citizen']} />}>

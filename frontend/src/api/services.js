@@ -3,6 +3,8 @@ import client from './client';
 export const authApi = {
   login: (body) => client.post('/auth/login', body),
   register: (body) => client.post('/auth/register', body),
+  verifyOtp: (body) => client.post('/auth/verify-otp', body),
+  resendOtp: (body) => client.post('/auth/resend-otp', body),
   me: () => client.get('/auth/me'),
 };
 

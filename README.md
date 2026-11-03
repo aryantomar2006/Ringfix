@@ -30,7 +30,7 @@ Views are the React pages; the API returns JSON only. Controllers never touch mo
 
 | # | Feature | Where |
 |---|---------|-------|
-| B1 | Registration & login (JWT, bcrypt) | `auth.service`, `AuthPages.jsx` |
+| B1 | Registration with **email OTP verification**, login (JWT, bcrypt) | `auth.service`, `utils/otp.js`, `AuthPages.jsx`, `VerifyOtp.jsx` |
 | B2 | Complaint submission with text, location, photos | `complaint.service`, `upload.js`, `NewComplaint.jsx` |
 | B3 | Lifecycle OPEN → IN_PROGRESS → RESOLVED (enforced transitions + history) | `constants.STATUS_TRANSITIONS`, `updateStatus` |
 | B4 | Municipal dashboard: view / assign / update | `Dashboard.jsx`, `ComplaintDetail.jsx` |
@@ -89,6 +89,11 @@ GET    /api/reports/csv | /pdf                     (same filters as list)
 GET    /api/notifications   PATCH /api/notifications/read
 POST   /api/staff  | /api/sla/scan                 (admin)
 ```
+
+## Email OTP verification
+Sign-up flow: `POST /auth/register` creates an unverified account and emails a 6-digit code → `POST /auth/verify-otp {email, otp}` verifies and logs the user in. `POST /auth/resend-otp` re-sends (60 s cooldown).
+Codes are stored only as an HMAC hash, expire in 10 min, and allow 5 wrong attempts. Unverified users can't log in (login re-sends a code). Staff/admin created by an admin and seeded demo users are pre-verified.
+**Set SMTP_* env vars** (Gmail app password, Brevo, Resend SMTP, etc.) or no email is sent. Without SMTP the code is printed in the backend console, which only works locally. Users created before this change must be re-seeded or have `isVerified: true` set.
 
 ## Notes
 - Public sign-up always creates a **citizen**; staff/admin are created by an admin (or seed).

@@ -23,8 +23,12 @@ export function AuthProvider({ children }) {
     return u;
   }, []);
 
-  const register = useCallback(async (data) => {
-    const { user: u, token } = await authApi.register(data);
+  // Step 1 of sign-up: sends an OTP to the email. The user is NOT logged in yet.
+  const register = useCallback((data) => authApi.register(data), []);
+
+  // Step 2: verify the OTP, which also logs the user in
+  const verifyOtp = useCallback(async (payload) => {
+    const { user: u, token } = await authApi.verifyOtp(payload);
     tokenStore.set(token);
     setUser(u);
     return u;
@@ -33,7 +37,7 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => { tokenStore.clear(); setUser(null); }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verifyOtp, logout }}>
       {children}
     </AuthContext.Provider>
   );

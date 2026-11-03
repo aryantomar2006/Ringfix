@@ -15,7 +15,11 @@ export function Login() {
     try {
       const u = await login(form);
       nav(u.role === 'citizen' ? '/my-complaints' : '/dashboard');
-    } catch (err) { setError(err.message); } finally { setBusy(false); }
+    } catch (err) {
+      // Account exists but email not verified: a fresh code was just sent
+      if (err.details?.needsVerification) nav('/verify', { state: { email: err.details.email || form.email } });
+      else setError(err.message);
+    } finally { setBusy(false); }
   };
 
   return (
@@ -41,7 +45,7 @@ export function Register() {
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setError('');
-    try { await register(form); nav('/my-complaints'); }
+    try { const r = await register(form); nav('/verify', { state: { email: r.email } }); }
     catch (err) {
       setError(err.details ? err.details.map((d) => d.message).join(', ') : err.message);
     } finally { setBusy(false); }
